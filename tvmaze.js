@@ -1,11 +1,9 @@
-// do we need to start a server?
 
 "use strict";
 
 const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
-
 
 /** Given a search term, search for tv shows that match that query.
  *
@@ -20,12 +18,28 @@ async function getShowsByTerm(searchQuery) {
   const searchData = await axios.get(`http://api.tvmaze.com/search/shows`,
     { params: { q: searchQuery } });
 
-  // opportunity for destructuring? .map()?
-  let showID = searchData.data[0].show.id;
+  let compressedSearchData = [];
 
-  const episodes = await axios.get(`http://api.tvmaze.com/shows/${showID}/episodes`);
+  // take the JSON object
+  // iterate through the array
+  // filter each object located at each array index
+  // return new array with filtered object
+  for (let showIndex of searchData.data) {
+    let newObject = {};
+    newObject.id = showIndex.show.id;
+    newObject.name = showIndex.show.name;
+    newObject.summary = showIndex.show.summary;
+    newObject.image = showIndex.show.image;
+    if (newObject.image === null) {
+      console.log("image not found")
+      newObject.image = { 'medium': "https://store-images.s-microsoft.com/image/apps.65316.13510798887490672.6e1ebb25-96c8-4504-b714-1f7cbca3c5ad.f9514a23-1eb8-4916-a18e-99b1a9817d15?mode=scale&q=90&h=300&w=300" };
+    }
+    console.log(newObject)
+    //push resulting object to new array
+    compressedSearchData.push(newObject);
+  }
 
-  return episodes.data;
+  return compressedSearchData;
 
 }
 
@@ -38,11 +52,6 @@ function populateShows(shows) {
   $showsList.empty();
 
   for (let show of shows) {
-//13164
-    if (show.image === null) {
-      console.log("image not found")
-      show.image = {'medium' :"https://store-images.s-microsoft.com/image/apps.65316.13510798887490672.6e1ebb25-96c8-4504-b714-1f7cbca3c5ad.f9514a23-1eb8-4916-a18e-99b1a9817d15?mode=scale&q=90&h=300&w=300"};
-    }
     const $show = $(
       `<div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
@@ -94,3 +103,12 @@ $searchForm.on("submit", async function (evt) {
 /** Write a clear docstring for this function... */
 
 // function populateEpisodes(episodes) { }
+
+
+
+
+// potential code for episodes
+
+// const episodes = await axios.get(`http://api.tvmaze.com/shows/${showID}/episodes`);
+
+// return episodes.data;
