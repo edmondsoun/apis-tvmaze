@@ -4,6 +4,7 @@
 const $showsList = $("#showsList");
 const $episodesArea = $("#episodesArea");
 const $searchForm = $("#searchForm");
+const $showEpisodes = $(".Show-getEpisodes")
 
 /** Given a search term, search for tv shows that match that query.
  *
@@ -14,16 +15,11 @@ const $searchForm = $("#searchForm");
 
 async function getShowsByTerm(searchQuery) {
 
-  // return JSON object with values that match search query
   const searchData = await axios.get(`http://api.tvmaze.com/search/shows`,
     { params: { q: searchQuery } });
 
   let compressedSearchData = [];
 
-  // take the JSON object
-  // iterate through the array
-  // filter each object located at each array index
-  // return new array with filtered object
   for (let showIndex of searchData.data) {
     let newObject = {};
     newObject.id = showIndex.show.id;
@@ -47,18 +43,13 @@ async function getShowsByTerm(searchQuery) {
 /** Given list of shows, create markup for each and to DOM */
 
 function populateShows(shows) {
-  //const $showsList = $("#showsList");
-  // empties show list in DOM
+
   $showsList.empty();
 
   for (let show of shows) {
     const $show = $(
       `<div data-show-id="${show.id}" class="Show col-md-12 col-lg-6 mb-4">
          <div class="media">
-           <img
-              src=${show.image.medium}
-              alt="Bletchly Circle San Francisco"
-              class="w-25 me-3">
            <div class="media-body">
              <h5 class="text-primary">${show.name}</h5>
              <div><small>${show.summary}</small></div>
@@ -117,19 +108,51 @@ $searchForm.on("submit", async function (evt) {
     episodeData.push(newObject);
   }
 
+  console.log(episodeData)
   return episodeData;
-
 
   }
 
-/** Write a clear docstring for this function... */
+/** Handle episode area.
+    Accepts an array of episodes.
+ *  Appends episodes to DOM when button is clicked. */
 
-// function populateEpisodes(episodes) { }
+function populateEpisodes(episodes) {
+  console.log(episodes);
+  //
+  for (let episode of episodes) {
+    const $episode = $(
+      `<div data-show-id="${episode.id}" class="Show col-md-12 col-lg-6 mb-4">
+         <div class="media">
+           <div class="media-body">
+             <h5 class="text-primary">${episode.name}</h5>
+             <h6 class="text-primary">${episode.season}</h5>
+             <div><small>${episode.summary}</small></div>
+             <button class="btn btn-outline-light btn-sm Show-getEpisodes">
+               Episodes
+             </button>
+           </div>
+         </div>
+       </div>
+      `);
+
+    $episodesArea.append($episode);
+  }
+
+}
+
+// /**Handles button click. */
+// async function searchForEpisodesAndDisplay() {
+//   const episodeID = 
+//   //what's episodesArea?
+//   $episodesArea.hide();
+//   populateShows(shows);
+// }
+
+// $showEpisodes.on("click", async function (evt) {
+//   evt.preventDefault();
+//   console.log($(evt).data(data-show-id))
+//   await searchForShowAndDisplay();
+// });
 
 
-
-
-// potential code for episodes
-
-//
-// return episodes.data;
